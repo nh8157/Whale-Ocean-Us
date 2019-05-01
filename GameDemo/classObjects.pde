@@ -13,7 +13,7 @@ class Ball {
     xpos = x;
     ypos = y;
     speed = spe;
-    r = 10;
+    r = 20;
     hp = 100;
   }
 
@@ -32,10 +32,18 @@ class Ball {
   }
   // if the player hit the block for once
   // its hp will decrease by 25%
-  void hpDown() {
+  void hpDownB(){
+    hp -= 5;
+  }
+  void hpDownC() {
     hp -= 25;
   }
-  void hpUp() {
+  void hpUpB() {
+    if (hp < 100){
+      hp += 5;
+    }
+  }
+  void hpUpC() {
     if (hp < 100) {
       hp += 25;
     }
@@ -91,7 +99,7 @@ class Subsidy {
     xpos -= speed;
   }
   void display() {
-    fill(0, 0, 255);
+    fill(0, 255, 0);
     rectMode(CENTER);
     rect(xpos, ypos, a, a);
   }

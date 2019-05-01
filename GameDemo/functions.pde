@@ -1,6 +1,6 @@
 ////////////////////////////FUNCTIONS////////////////////////////
 void displayMove() {
-  for (int i = 0; i < 5; i ++) {
+  for (int i = 0; i < subs.length; i ++) {
     obs[i].display();
     subs[i].display();
     obs[i].move();
@@ -10,12 +10,12 @@ void displayMove() {
 }
 
 void generate() {
-  for (int i = 0; i < 5; i ++) {
+  for (int i = 0; i < subs.length; i ++) {
     if (obs[i].xpos < 0) {
-      obs[i] = new Obstacles(width + random(40), random(100, height), random(5, 10));
+      obs[i] = new Obstacles(width + random(40), random(100, height), random(4, 6));
     }
     if (subs[i].xpos < 0) {
-      subs[i] = new Subsidy(width + random(40), random(100, height), random(5, 10));
+      subs[i] = new Subsidy(width + random(40), random(100, height), random(4, 6));
     }
   }
 }
@@ -38,15 +38,38 @@ void control() {
 }
 
 void collision() {
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < subs.length; i++) {
     if (dist(ball1.xpos, ball1.ypos, obs[i].xpos, obs[i].ypos) <= 10 ) {
-      ball1.hpDown();
-      obs[i] = new Obstacles(width + random(40), random(100, height), random(5, 10));
+      ball1.hpDownC();
+      obs[i] = new Obstacles(width + random(40), random(100, height), random(4, 6));
     }
     if (dist(ball1.xpos, ball1.ypos, subs[i].xpos, subs[i].ypos) <= 10) {
-      ball1.hpUp();
-      subs[i] = new Subsidy(width + random(40), random(100, height), random(5, 10));
+      ball1.hpUpC();
+      subs[i] = new Subsidy(width + random(40), random(100, height), random(4, 6));
     }
     gameState = ball1.liveOrDie(gameState);
   }
 }
+
+float moreBlocks(float present, float previous){
+  if (present - previous > 10000){
+    for (int i = 0; i < 2; i ++){
+      obs = (Obstacles[]) append(obs, new Obstacles(width + random(40), random(100, height), random(4, 6)));
+      subs = (Subsidy[]) append(subs, new Subsidy(width + random(40), random(100, height), random(4, 6)));
+    }
+    println(subs.length);
+    previous = present;
+  }
+  return previous;
+}
+
+//void breathe(){
+//  float present = millis();
+//  if (ball1.ypos > 100 && present - previous >= interval){
+//    ball1.hpDownB();
+//  } else if (ball1.ypos == 100){
+//    ball1.hpUpB();
+//    previous = present;
+//  }
+//  println(present - previous);
+//}
