@@ -1,10 +1,13 @@
 int gameState = 0;
+//initiating ball
 Ball ball1;
+// initializing two arrays
 Obstacles[] obs;
 Subsidy[] subs;
 
 void setup(){
   size(640, 480);
+  // initializing two arrays
   obs = new Obstacles[5];
   subs = new Subsidy[5];
   background(0);
@@ -14,38 +17,70 @@ void draw(){
   // the state of the game stays at the first
   // when the user clicks
   // the state will change again
-  background(0);
   if (gameState == 0){
+    background(0);
     text("Welcome to the game", width / 2, height / 2);
     text("Press S to start", width / 2, height / 2 + 10);
     if (keyPressed && key == 's'){
       gameState = 1;
-      ball1 = new Ball(0, 0, 8);
+      ball1 = new Ball(0, 0, 7);
+      // adding class objects into arrays9
       for (int i = 0; i < 5; i ++){
         obs[i] = new Obstacles(width + random(40), random(height), random(10));
         subs[i] = new Subsidy(width + random(40), random(height), random(10));
       }
     }
   }
-  
   else if (gameState == 1){
-    println(ball1.hp, 10, 10);
-    background(0);
-    for (int i = 0; i < 5; i ++){
-      obs[i].display();
-      obs[i].move();
-      subs[i].display();
-      subs[i].move();
+    println(ball1.hp);
+    background(255);
+    text(ball1.hp, 10, 10);
+    // display ball, obstacles, subsidy
+    displayMove();
+    // generate new obstacles and subsidy
+    // once out of the screen
+    generate();
+    // user control the ball through keyboard
+    control();
+    // collision determination
+    collision();
     }
-    for (int i = 0; i < 5; i ++){
+  else{
+    background(0);
+    text("game over", width/2, height/2);
+    text("press B to restart", width/2, height/2 + 20);
+    if (keyPressed){
+      if (key == 'b' || key == 'B'){
+        gameState = 0;
+      }
+    }
+  }
+}
+
+////////////////////////////FUNCTIONS////////////////////////////
+void displayMove(){
+  for (int i = 0; i < 5; i ++){
+    obs[i].display();
+    subs[i].display();
+    obs[i].move();
+    subs[i].move();
+  }
+  ball1.display();
+}
+
+void generate(){
+  for (int i = 0; i < 5; i ++){
       if (obs[i].xpos < 0){
         obs[i] = new Obstacles(width + random(40), random(height), random(10));
       }
       if (subs[i].xpos < 0){
         subs[i] = new Subsidy(width + random(40), random(height), random(10));
       }
-    }
-    if (keyPressed) {
+  }
+}
+
+void control(){
+  if (keyPressed) {
       if (key == 'w' && ball1.ypos > 0){
         ball1.moveUp();
       }
@@ -59,8 +94,10 @@ void draw(){
         ball1.moveRight();
       }
     }
-    ball1.display();
-    for (int i = 0; i < 5; i++){
+}
+
+void collision(){
+  for (int i = 0; i < 5; i++){
       if (dist(ball1.xpos, ball1.ypos, obs[i].xpos, obs[i].ypos) <= 10 ){
         ball1.hpDown();
         obs[i] = new Obstacles(width + random(40), random(height), random(10));
@@ -69,19 +106,8 @@ void draw(){
         ball1.hpUp();
         subs[i] = new Subsidy(width + random(40), random(height), random(10));
       }
-      gameState = ball1.liveOrDie(gameState);  
-      }
+    gameState = ball1.liveOrDie(gameState);  
     }
-  else{
-    background(0);
-    text("game over", width/2, height/2);
-    text("press any key to restart", width/2, height/2 + 20);
-    if (keyPressed){
-      if (key == 'b' || key == 'B'){
-        gameState = 0;
-      }
-    }
-  }
 }
 
 ////////////////////////////BALL////////////////////////////
@@ -122,7 +148,9 @@ class Ball{
     hp -= 25; 
   }
   void hpUp(){
-    hp += 25;
+    if (hp < 100){
+      hp += 25;
+    }
   }
   int liveOrDie(int gameState){
     if (hp == 0){
