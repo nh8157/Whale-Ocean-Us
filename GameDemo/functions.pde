@@ -1,12 +1,12 @@
 ////////////////////////////FUNCTIONS////////////////////////////
-void displayMove() {
+void displayMove(int counter) {
   for (int i = 0; i < subs.length; i ++) {
     obs[i].display();
     subs[i].display();
     obs[i].move();
     subs[i].move();
   }
-  ball1.display();
+  ball1.display(whales[counter]);
 }
 
 void generate() {
@@ -39,7 +39,7 @@ void control() {
 
 void collision() {
   for (int i = 0; i < subs.length; i++) {
-    if (dist(ball1.xpos, ball1.ypos, obs[i].xpos, obs[i].ypos) <= 10 ) {
+    if (dist(ball1.xpos, ball1.ypos, obs[i].xpos, obs[i].ypos) <= 20 ) {
       ball1.hpDownC();
       obs[i] = new Obstacles(width + random(40), random(100, height), random(4, 6));
     }
