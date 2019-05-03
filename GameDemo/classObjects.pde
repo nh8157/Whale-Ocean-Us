@@ -57,7 +57,8 @@ class Ball {
   void display(PImage i) {
     stroke(0);
     fill(255, 0, 0);
-    image(i,xpos, ypos, r, r);
+    ellipse(xpos, ypos, r * 3 / 5, (r - 25) / 2.5);
+    image(i, xpos - 138, ypos - 40, r * 3.5 / 2, r);
   }
 }
 
@@ -67,18 +68,19 @@ class Obstacles {
   float xpos;
   float ypos;
   float speed;
-
+  int r;
   Obstacles(float x, float y, float spe) {
     xpos = x;
     ypos = y;
     speed = spe;
+    r = 10;
   }
   void move() {
     xpos -= speed;
   }
   void display() {
     fill(255, 255, 0);
-    ellipse(xpos, ypos, 10, 10);
+    ellipse(xpos, ypos, r, r);
   }
 }
 

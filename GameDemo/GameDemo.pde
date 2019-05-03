@@ -8,12 +8,14 @@ ArrayList<Obstacles> obs = new ArrayList<Obstacles>();
 ArrayList<Subsidy> subs = new ArrayList<Subsidy>();
 float present;
 float previous = 0;
-int counter = 0;
+int counter;
+int count;
 
 void setup() {
   size(1800, 800);
   // initializing two arrays
   background(0);
+  count = 0;
   whales [0]= loadImage("whaleOne.png");
   whales [1]= loadImage("whaleOne.png");
   whales [2]= loadImage("whaleOne.png");
@@ -54,6 +56,7 @@ void setup() {
   whales [37]= loadImage("whaleTwo.png");
   whales [38] =loadImage("whaleTwo.png");
   whales [39] =loadImage("whaleTwo.png");
+  count ++;
 }
 
 void draw() {
@@ -63,7 +66,7 @@ void draw() {
   
   present = millis();
   if (gameState == 0) {
-    
+    counter = 0;
     background(0);
     text("Welcome to the game", width / 2, height / 2);
     text("Press S to start", width / 2, height / 2 + 10);
@@ -71,8 +74,12 @@ void draw() {
       previous = present;
       gameState = 1;
       ball1 = new Ball(0, 200, 7);
-      // adding class objects into arrays9
-      for (int i = 0; i < subs.size(); i ++) {
+      if (count != 0){
+        obs.clear();
+        subs.clear();
+      }
+      // adding class objects into arrays
+      for (int i = 0; i < 2; i ++) {
         obs.add(new Obstacles(random(40) + width, random(100, height), random(5, 10)));
         subs.add(new Subsidy(random(40) + width, random(100, height), random(5, 10)));
       }

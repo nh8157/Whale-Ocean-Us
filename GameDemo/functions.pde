@@ -44,16 +44,17 @@ void control() {
 }
 
 void collision() {
-<<<<<<< HEAD
   for (int i = 0; i < subs.size(); i++) {
     Obstacles ob = obs.get(i);
     Subsidy sub = subs.get(i);
-    if (dist(ball1.xpos, ball1.ypos, ob.xpos, sub.ypos) <= 20 ) {
+    float ob1 = dist(ob.xpos + 26, ob.ypos, ball1.xpos, ball1.ypos);
+    float ob2 = dist(ob.xpos - 26, ob.ypos, ball1.xpos, ball1.ypos);
+    if (ob1 + ob2 <= 60 + ob.r) {
       ball1.hpDownC();
       obs.remove(i);
       obs.add(new Obstacles(width + random(40), random(100, height), random(4, 6)));
     }
-    if (dist(ball1.xpos, ball1.ypos, sub.xpos, sub.ypos) <= 10) {
+    if (dist(ball1.xpos, ball1.ypos, sub.xpos, sub.ypos) <= 30) {
       ball1.hpUpC();
       subs.remove(i);
       subs.add(new Subsidy(width + random(40), random(100, height), random(4, 6)));
