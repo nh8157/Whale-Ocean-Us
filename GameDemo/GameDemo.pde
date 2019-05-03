@@ -54,10 +54,6 @@ void setup() {
   whales [37]= loadImage("whaleTwo.png");
   whales [38] =loadImage("whaleTwo.png");
   whales [39] =loadImage("whaleTwo.png");
-<<<<<<< HEAD
-=======
-  frameRate(30);
->>>>>>> a4e85fac97b2f6263cb24992756a5f605d294092
 }
 
 void draw() {

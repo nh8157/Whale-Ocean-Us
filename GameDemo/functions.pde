@@ -1,6 +1,5 @@
 ////////////////////////////FUNCTIONS////////////////////////////
 void displayMove(int counter) {
-<<<<<<< HEAD
   for (Obstacles ob : obs){
     ob.display();
     ob.move();
@@ -9,14 +8,6 @@ void displayMove(int counter) {
     sub.display();
     sub.move();
   }
-=======
-  for (int i = 0; i < subs.length; i ++) {
-    obs[i].display();
-    subs[i].display();
-    obs[i].move();
-    subs[i].move();
-  }
->>>>>>> a4e85fac97b2f6263cb24992756a5f605d294092
   ball1.display(whales[counter]);
 }
 
@@ -58,10 +49,6 @@ void collision() {
     Obstacles ob = obs.get(i);
     Subsidy sub = subs.get(i);
     if (dist(ball1.xpos, ball1.ypos, ob.xpos, sub.ypos) <= 20 ) {
-=======
-  for (int i = 0; i < subs.length; i++) {
-    if (dist(ball1.xpos, ball1.ypos, obs[i].xpos, obs[i].ypos) <= 20 ) {
->>>>>>> a4e85fac97b2f6263cb24992756a5f605d294092
       ball1.hpDownC();
       obs.remove(i);
       obs.add(new Obstacles(width + random(40), random(100, height), random(4, 6)));
