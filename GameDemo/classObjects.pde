@@ -13,7 +13,7 @@ class Ball {
     xpos = x;
     ypos = y;
     speed = spe;
-    r = 20;
+    r = 100;
     hp = 100;
   }
 
@@ -54,10 +54,10 @@ class Ball {
     }
     return gameState;
   }
-  void display() {
+  void display(PImage i) {
     stroke(0);
     fill(255, 0, 0);
-    ellipse(xpos, ypos, r, r);
+    image(i,xpos, ypos, r, r);
   }
 }
 

@@ -1,21 +1,27 @@
 ////////////////////////////FUNCTIONS////////////////////////////
-void displayMove() {
-  for (int i = 0; i < subs.length; i ++) {
-    obs[i].display();
-    subs[i].display();
-    obs[i].move();
-    subs[i].move();
+void displayMove(int counter) {
+  for (Obstacles ob : obs){
+    ob.display();
+    ob.move();
   }
-  ball1.display();
+  for (Subsidy sub : subs){
+    sub.display();
+    sub.move();
+  }
+  ball1.display(whales[counter]);
 }
 
 void generate() {
-  for (int i = 0; i < subs.length; i ++) {
-    if (obs[i].xpos < 0) {
-      obs[i] = new Obstacles(width + random(40), random(100, height), random(4, 6));
+  for (int i = 0; i < subs.size(); i ++) {
+    Obstacles ob = obs.get(i);
+    Subsidy sub = subs.get(i);
+    if (ob.xpos < 0) {
+      obs.remove(i);
+      obs.add(new Obstacles(width + random(40), random(100, height), random(5, 10)));
     }
-    if (subs[i].xpos < 0) {
-      subs[i] = new Subsidy(width + random(40), random(100, height), random(4, 6));
+    if (sub.xpos < 0) {
+      subs.remove(i);
+      subs.add(new Subsidy(width + random(40), random(100, height), random(5, 10)));
     }
   }
 }
@@ -38,14 +44,18 @@ void control() {
 }
 
 void collision() {
-  for (int i = 0; i < subs.length; i++) {
-    if (dist(ball1.xpos, ball1.ypos, obs[i].xpos, obs[i].ypos) <= 10 ) {
+  for (int i = 0; i < subs.size(); i++) {
+    Obstacles ob = obs.get(i);
+    Subsidy sub = subs.get(i);
+    if (dist(ball1.xpos, ball1.ypos, ob.xpos, sub.ypos) <= 20 ) {
       ball1.hpDownC();
-      obs[i] = new Obstacles(width + random(40), random(100, height), random(4, 6));
+      obs.remove(i);
+      obs.add(new Obstacles(width + random(40), random(100, height), random(4, 6)));
     }
-    if (dist(ball1.xpos, ball1.ypos, subs[i].xpos, subs[i].ypos) <= 10) {
+    if (dist(ball1.xpos, ball1.ypos, sub.xpos, sub.ypos) <= 10) {
       ball1.hpUpC();
-      subs[i] = new Subsidy(width + random(40), random(100, height), random(4, 6));
+      subs.remove(i);
+      subs.add(new Subsidy(width + random(40), random(100, height), random(4, 6)));
     }
     gameState = ball1.liveOrDie(gameState);
   }
@@ -54,10 +64,10 @@ void collision() {
 float moreBlocks(float present, float previous){
   if (present - previous > 10000){
     for (int i = 0; i < 2; i ++){
-      obs = (Obstacles[]) append(obs, new Obstacles(width + random(40), random(100, height), random(4, 6)));
-      subs = (Subsidy[]) append(subs, new Subsidy(width + random(40), random(100, height), random(4, 6)));
+      obs.add(new Obstacles(width + random(40), random(100, height), random(4, 6)));
+      subs.add(new Subsidy(width + random(40), random(100, height), random(4, 6)));
     }
-    println(subs.length);
+    println(subs.size());
     previous = present;
   }
   return previous;
