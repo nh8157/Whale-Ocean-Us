@@ -57,7 +57,6 @@ class Ball {
   void display(PImage i) {
     stroke(0);
     fill(255, 0, 0);
-    ellipse(xpos, ypos, r * 3 / 5, (r - 25) / 2.5);
     image(i, xpos - 138, ypos - 40, r * 3.5 / 2, r);
   }
 }
