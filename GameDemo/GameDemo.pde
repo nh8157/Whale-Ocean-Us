@@ -1,4 +1,9 @@
-PImage [] whales = new PImage [40];
+PImage bag ;
+PImage bbt;
+PImage cd; 
+PImage tube;
+PImage shampoo;
+PImage [] whales = new PImage [65];
 
 int gameState = 0;
 //initiating ball 
@@ -6,6 +11,7 @@ Ball ball1;
 // initializing two arrays\list
 ArrayList<Obstacles> obs = new ArrayList<Obstacles>();
 ArrayList<Subsidy> subs = new ArrayList<Subsidy>();
+
 float present;
 float previous = 0;
 int counter;
@@ -15,47 +21,78 @@ void setup() {
   size(1800, 800);
   // initializing two arrays
   background(0);
+  bag = loadImage("bag.png");
+  bbt = loadImage("yidiandian.png");
+  cd = loadImage ("cd.png");
+  tube = loadImage("tube.png");
+  shampoo = loadImage("dove.png");
   count = 0;
-  whales [0]= loadImage("whaleOne.png");
-  whales [1]= loadImage("whaleOne.png");
-  whales [2]= loadImage("whaleOne.png");
-  whales [3]= loadImage("whaleOne.png");
-  whales [4]= loadImage("whaleOne.png");
-  whales [5]= loadImage("whaleTwo.png");
-  whales [6]= loadImage("whaleTwo.png");
-  whales [7]= loadImage("whaleTwo.png");
-  whales [8]= loadImage("whaleTwo.png");
-  whales [9]= loadImage("whaleTwo.png");
-  whales [10]= loadImage("whaleThree.png");
-  whales [11]= loadImage ("whaleThree.png");
-  whales [12]= loadImage ("whaleThree.png");
-  whales [13]= loadImage ("whaleThree.png");
-  whales [14]= loadImage("whaleThree.png");
-  whales [15]= loadImage("whaleFour.png");
-  whales [16]= loadImage("whaleFour.png");
-  whales [17]= loadImage("whaleFour.png");
-  whales [18]= loadImage("whaleFour.png");
-  whales [19]= loadImage("whaleFour.png");
-  whales [20]= loadImage("whaleFive.png");
-  whales [21]= loadImage ("whaleFive.png");
-  whales [22]= loadImage ("whaleFive.png");
-  whales [23]= loadImage ("whaleFive.png");
-  whales [24]= loadImage("whaleFive.png");
-  whales[25]= loadImage("whaleFour.png");
-  whales [26]= loadImage("whaleFour.png");
-  whales [27]= loadImage("whaleFour.png");
-  whales [28]= loadImage("whaleFour.png");
-  whales [29]= loadImage("whaleFour.png");
-  whales [30]= loadImage("whaleThree.png");
-  whales [31]= loadImage("whaleThree.png");
-  whales [32]= loadImage("whaleThree.png");
-  whales [33]= loadImage("whaleThree.png");
-  whales [34]= loadImage("whaleThree.png");
-  whales [35]= loadImage("whaleTwo.png");
-  whales [36]= loadImage("whaleTwo.png");
-  whales [37]= loadImage("whaleTwo.png");
-  whales [38] =loadImage("whaleTwo.png");
-  whales [39] =loadImage("whaleTwo.png");
+  whales [0]= loadImage("0.png");
+  whales [1]= loadImage("0.png");
+  whales [2]= loadImage("0.png");
+  whales [3]= loadImage("0.png");
+  whales [4]= loadImage("0.png");
+  whales [5]= loadImage("1.png");
+  whales [6]= loadImage("1.png");
+  whales [7]= loadImage("1.png");
+  whales [8]= loadImage("1.png");
+  whales [9]= loadImage("1.png");
+  whales [10]= loadImage("2.png");
+  whales [11]= loadImage ("2.png");
+  whales [12]= loadImage ("2.png");
+  whales [13]= loadImage ("2.png");
+  whales [14]= loadImage("2.png");
+  whales [15]= loadImage("3.png");
+  whales [16]= loadImage("3.png");
+  whales [17]= loadImage("3.png");
+  whales [18]= loadImage("3.png");
+  whales [19]= loadImage("3.png");
+  whales [20]= loadImage("4.png");
+  whales [21]= loadImage ("4.png");
+  whales [22]= loadImage ("4.png");
+  whales [23]= loadImage ("4.png");
+  whales [24]= loadImage("4.png");
+  whales [25]= loadImage("5.png");
+  whales [26]= loadImage("5.png");
+  whales [27]= loadImage("5.png");
+  whales [28]= loadImage("5.png");
+  whales [29]= loadImage("5.png");
+  whales [30]= loadImage("6.png");
+  whales [31]= loadImage("6.png");
+  whales [32]= loadImage("6.png");
+  whales [33]= loadImage("6.png");
+  whales [34]= loadImage("6.png");
+  whales [35]= loadImage("5.png");
+  whales [36]= loadImage("5.png");
+  whales [37] =loadImage("5.png");
+  whales [38] =loadImage("5.png");
+  whales [39] =loadImage("5.png");
+  whales [40] =loadImage("4.png");
+  whales [41] =loadImage("4.png");
+  whales [42] =loadImage("4.png");
+  whales [43] =loadImage("4.png");
+  whales [44] =loadImage("4.png");
+  whales [45] =loadImage("3.png");
+  whales [46] =loadImage("3.png");
+  whales [47] =loadImage("3.png");
+  whales [48] =loadImage("3.png");
+  whales [49] =loadImage("3.png");
+  whales [50] =loadImage("2.png");
+  whales [51] =loadImage("2.png");
+  whales [52] =loadImage("2.png");
+  whales [53] =loadImage("2.png");
+  whales [54] =loadImage("2.png");
+  whales [55] =loadImage("1.png");
+  whales [56] =loadImage("1.png");
+  whales [57] =loadImage("1.png");
+  whales [58] =loadImage("1.png");
+  whales [59] =loadImage("1.png");
+  whales [60] =loadImage("0.png");
+  whales [61] =loadImage("0.png");
+  whales [62] =loadImage("0.png");
+  whales [63] =loadImage("0.png");
+  whales [64] =loadImage("0.png");
+ 
   count ++;
 }
 
@@ -81,6 +118,7 @@ void draw() {
       // adding class objects into arrays
       for (int i = 0; i < 2; i ++) {
         obs.add(new Obstacles(random(40) + width, random(100, height), random(5, 10)));
+       
         subs.add(new Subsidy(random(40) + width, random(100, height), random(5, 10)));
       }
     }
@@ -108,7 +146,7 @@ void draw() {
     // collision determination
     collision();
     //breathe(previous, present, interval);
-    if (counter < 7){
+    if (counter < 64){
       counter ++;
     } else {
       counter = 0;

@@ -4,6 +4,8 @@ void displayMove(int counter) {
     ob.display();
     ob.move();
   }
+  
+  
   for (Subsidy sub : subs){
     sub.display();
     sub.move();
