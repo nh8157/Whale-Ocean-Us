@@ -11,22 +11,35 @@ Ball ball1;
 // initializing two arrays\list
 ArrayList<Obstacles> obs = new ArrayList<Obstacles>();
 ArrayList<Subsidy> subs = new ArrayList<Subsidy>();
-
+ArrayList<Background> bg = new ArrayList <Background>(); 
+PImage img1;
+PImage img2;
 float present;
-float previous = 0;
-int counter;
-int count;
+float previous0 = 0;
+float previous1 = 0;
+float previous2 = 0;
+int counter0;
+int counter1 = 0;
+int counter2 = 0;
+int count0;
+int count1;
+int seaLevel;
+float[] brePara = new float[2];
+float[] hunPara = new float[2];
 
 void setup() {
   size(1800, 800);
   // initializing two arrays
+  seaLevel = 300;
   background(0);
   bag = loadImage("bag.png");
   bbt = loadImage("yidiandian.png");
   cd = loadImage ("cd.png");
   tube = loadImage("tube.png");
   shampoo = loadImage("dove.png");
-  count = 0;
+  count0 = 0;
+  img1 = loadImage("BG1.jpg");
+  img1.resize(1800, 800);
   whales [0]= loadImage("0.png");
   whales [1]= loadImage("0.png");
   whales [2]= loadImage("0.png");
@@ -92,64 +105,74 @@ void setup() {
   whales [62] =loadImage("0.png");
   whales [63] =loadImage("0.png");
   whales [64] =loadImage("0.png");
- 
-  count ++;
+  for (int i = 0; i < whales.length; i ++){
+    whales[i].resize(175, 100);
+  }
+  count0 ++;
 }
 
 void draw() {
   // the state of the game stays at the first
   // when the user clicks
   // the state will change again
-  
+  //image(img2, width / 2, height / 2);
   present = millis();
   if (gameState == 0) {
-    counter = 0;
+    counter0 = 0;
     background(0);
     text("Welcome to the game", width / 2, height / 2);
     text("Press S to start", width / 2, height / 2 + 10);
     if (keyPressed && key == 's') {
-      previous = present;
+      previous0 = present;
+      previous1 = present;
+      previous2 = present;
+      brePara[0] = previous1;
+      brePara[1] = counter1;
+      hunPara[0] = previous2;
+      hunPara[1] = counter2;
       gameState = 1;
-      ball1 = new Ball(0, 200, 7);
-      if (count != 0){
+      ball1 = new Ball(0, 300, 7);
+      imageMode(CENTER);
+      
+      if (count0 != 0){
         obs.clear();
         subs.clear();
+        bg.clear();
       }
       // adding class objects into arrays
+      bg.add(new Background(img1, width / 2));
+      bg.add(new Background(img1, width * 3 / 2));
       for (int i = 0; i < 2; i ++) {
-        obs.add(new Obstacles(random(40) + width, random(100, height), random(5, 10)));
+        obs.add(new Obstacles(random(40) + width, random(seaLevel, height), random(5, 10)));
        
-        subs.add(new Subsidy(random(40) + width, random(100, height), random(5, 10)));
+        subs.add(new Subsidy(random(40) + width, random(seaLevel, height), random(5, 10)));
       }
     }
   } else if (gameState == 1) {
-    background(255);
-    rectMode(CORNER);
-    fill(0, 20, 200);
-    rect(0, 100, width, height);
-    noFill();
-    text(ball1.hp, 10, 10);
-    
+    displayBG();
+    text(ball1.hp, 30, 30);
+    text(ball1.bre, 30, 50);
     // attempting to introduce a rising difficulty
     // use the millis()
     // when the program executes to a point
     // the objects in the obs array will increase
     // the objects in the subs array will decrease
-    previous = moreBlocks(present, previous);
+    previous1 = moreBlocks(present, previous1);
+    brePara = breathe(present, brePara, seaLevel);
     // display ball, obstacles, subsidy
-    displayMove(counter);
+    displayMove(counter0);
     // generate new obstacles and subsidy
     // once out of the screen
     generate();
     // user control the ball through keyboard
     control();
     // collision determination
-    collision();
-    //breathe(previous, present, interval);
-    if (counter < 64){
-      counter ++;
+    hunPara[1] = collision(counter2);
+    hunPara = hunger(present, hunPara);
+    if (counter0 < 64){
+      counter0 ++;
     } else {
-      counter = 0;
+      counter0 = 0;
     }
   } else {
     background(0);
