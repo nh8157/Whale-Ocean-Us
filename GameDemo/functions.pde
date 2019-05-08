@@ -1,17 +1,4 @@
 ////////////////////////////FUNCTIONS////////////////////////////
-void displayBG(){
-  imageMode(CENTER);
-  for (int i = 0; i < 2; i ++){
-    Background back = bg.get(i); 
-    back.display();
-    back.move();
-    if (back.xpos <= -width / 2){
-      PImage img = back.reimg();
-      bg.remove(i);
-      bg.add(new Background(img, width * 3 / 2));
-    }
-  }
-}
 void displayMove(int counter) {
   for (Obstacles ob : obs){
     ob.display();
@@ -24,17 +11,20 @@ void displayMove(int counter) {
   ball1.display(whales[counter]);
 }
 
-void generate() {
+void generate(int seaLevel) {
   for (int i = 0; i < subs.size(); i ++) {
     Obstacles ob = obs.get(i);
     Subsidy sub = subs.get(i);
+    int[] classifier = classifier();
+    int obIn = classifier[0];
+    int subIn = classifier[1];
     if (ob.xpos < 0) {
       obs.remove(i);
-      obs.add(new Obstacles(width + random(40), random(300, height), random(5, 10)));
+      obs.add(new Obstacles(width + random(40), random(seaLevel, height), random(5, 10), obIn));
     }
     if (sub.xpos < 0) {
       subs.remove(i);
-      subs.add(new Subsidy(width + random(40), random(300, height), random(5, 10)));
+      subs.add(new Subsidy(width + random(40), random(seaLevel, height), random(5, 10)));
     }
   }
 }
@@ -55,34 +45,47 @@ void control() {
     }
   }
 }
-
-int collision(int count) {
+// differnet gargage might be generated
+// at this moment
+// it will generate different kinds of garbages
+int collision(int count, int seaLevel) {
   for (int i = 0; i < subs.size(); i++) {
     Obstacles ob = obs.get(i);
     Subsidy sub = subs.get(i);
     float ob1 = dist(ob.xpos + 26, ob.ypos, ball1.xpos, ball1.ypos);
     float ob2 = dist(ob.xpos - 26, ob.ypos, ball1.xpos, ball1.ypos);
+    int[] classifier = classifier();
+    int obIn = classifier[0];
+    int subIn = classifier[1];
     if (ob1 + ob2 <= 60 + ob.r) {
-      ball1.hpDownC();
+      for (int m = 0; m < 2 * (4 - ob.obClass); m ++){
+        ball1.hpDownC();
+      }
       obs.remove(i);
-      obs.add(new Obstacles(width + random(40), random(300, height), random(4, 6)));
+      obs.add(new Obstacles(width + random(40), random(seaLevel, height), random(4, 6), obIn));
       count = 0;
     }
     if (dist(ball1.xpos, ball1.ypos, sub.xpos, sub.ypos) <= 30) {
       ball1.hpUpC();
       subs.remove(i);
-      subs.add(new Subsidy(width + random(40), random(300, height), random(4, 6)));
+      subs.add(new Subsidy(width + random(40), random(seaLevel, height), random(4, 6)));
     }
     gameState = ball1.liveOrDie(gameState);
   }
   return count;
 }
 
-float moreBlocks(float present, float previous){
+// garbage is according to the random number generated
+// the obstacles will be generated more
+// the subsidy will be fewer and fewer
+float moreBlocks(float present, float previous, int seaLevel){
   if (present - previous > 10000){
     for (int i = 0; i < 2; i ++){
-      obs.add(new Obstacles(width + random(40), random(300, height), random(4, 6)));
-      subs.add(new Subsidy(width + random(40), random(300, height), random(4, 6)));
+      int[] classifier = classifier();
+      int obIn = classifier[0];
+      int subIn = classifier[1];
+      obs.add(new Obstacles(width + random(40), random(seaLevel, height), random(4, 6), obIn));
+      subs.add(new Subsidy(width + random(40), random(seaLevel, height), random(4, 6)));
     }
     println(subs.size());
     previous = present;
@@ -117,4 +120,32 @@ float[] hunger(float present, float[] Para){
   Para[0] = present;
   Para[1] = count;
   return Para;
+}
+
+// random generator for the determination of garbage type
+int[] classifier(){
+  float obRandom = random(10);
+  float subRandom = random(10);
+  int obIn;
+  int subIn;
+  if (obRandom <= 10 && obRandom > 9){
+    obIn = 0;
+  } else if (obRandom <= 9 && obRandom > 7){
+    obIn = 1;
+  } else if (obRandom <= 7 && obRandom > 4) {
+    obIn = 2;
+  } else {
+    obIn = 3;
+  }
+  if (subRandom <= 10 && subRandom > 9){
+    subIn = 0;
+  } else if (subRandom <= 9 && subRandom > 7){
+    subIn = 1;
+  } else if (subRandom <= 7 && subRandom > 4) {
+    subIn = 2;
+  } else {
+    subIn = 3;
+  }
+  int[] classifier = {obIn, subIn};
+  return classifier;
 }

@@ -14,9 +14,6 @@ class Background{
   void move(){
     xpos -= speed;
   }
-  void out(){
-    xpos = width / 2;
-  }
   void display(){
     image(img, xpos, height / 2);
   }
@@ -59,11 +56,13 @@ class Ball {
   // if the player hit the block for once
   // its hp will decrease by 25%
   void hpDownC() {
-    hp -= 25;
+    hp -= 5;
   }
   void hpUpC() {
-    if (hp < 100) {
-      hp += 25;
+    if (hp <= 95) {
+      hp += 5;
+    } else if (hp < 100) {
+      hp = 100;
     }
   }
   void breatheUpB() {
@@ -81,13 +80,12 @@ class Ball {
     }
   }
   int liveOrDie(int gameState) {
-    if (hp == 0) {
+    if (hp <= 0) {
       gameState = 2;
     }
     return gameState;
   }
   void display(PImage i) {
-    stroke(0);
     image(i, xpos - 55, ypos +10);
   }
 }
@@ -99,22 +97,30 @@ class Obstacles {
   float ypos;
   float speed;
   int r;
- 
-  Obstacles(float x, float y, float spe) {
+  int obClass;
+  int displayCount;
+  Obstacles(float x, float y, float spe, int obIn) {
     xpos = x;
     ypos = y;
     speed = spe;
+    obClass = obIn;
     r = 35;
+    displayCount = 0;
   }
   void move() {
     xpos -= speed;
   }
   void display() {
-    //fill(255, 255, 0);
-    image (bag, xpos, ypos, r,r);
-
-    
-    //ellipse(xpos, ypos, r, r);
+    if (displayCount == 0){
+      if (obClass == 2){
+        ypos = random(seaLevel - 40, seaLevel);
+        speed = random(3, 5);
+        displayCount ++;
+      } else if (obClass == 0){
+        speed = random(8, 10);
+      }
+    }
+    image (garbage[obClass], xpos, ypos, r,r);
   }
 }
 
