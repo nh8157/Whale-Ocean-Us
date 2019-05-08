@@ -41,17 +41,21 @@ class Ball {
   }
 
   // user controlling the movement of the ball
-  void moveUp() {
-    ypos -= speed;
-  }
-  void moveDown() {
-    ypos += speed;
-  }
-  void moveLeft() {
-    xpos -= speed;
-  }
-  void moveRight() {
-    xpos += speed;
+  //void moveUp() {
+  //  ypos -= speed;
+  //}
+  //void moveDown() {
+  //  ypos += speed;
+  //}
+  //void moveLeft() {
+  //  xpos -= speed;
+  //}
+  //void moveRight() {
+  //  xpos += speed;
+  //}
+  void move(int x, int y){
+    xpos = x;
+    ypos = y;
   }
   // if the player hit the block for once
   // its hp will decrease by 25%
@@ -135,14 +139,13 @@ class Subsidy {
     xpos = x;
     ypos = y;
     a = 20;
-    speed = spd;
+    speed = spd / 2;
   }
   void move() {
     xpos -= speed;
   }
-  void display() {
+  void display(PImage i) {
     fill(0, 255, 0);
-    rectMode(CENTER);
-    rect(xpos, ypos, a, a);
+    image(i, xpos, ypos);
   }
 }

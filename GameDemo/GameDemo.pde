@@ -4,13 +4,23 @@ PImage [] whales = new PImage [65];
 PImage [] garbage = new PImage [4];
 PImage [] food = new PImage [2];
 
+import gab.opencv.*;
+import processing.video.*;
+import java.awt.Rectangle;
+
+Capture video;
+OpenCV opencv;
+PImage src, colorFilteredImage;
+ArrayList<Contour> contours;
+
 int gameState = 0;
 //initiating ball 
 Ball ball1;
 // initializing two arrays\list
 ArrayList<Obstacles> obs = new ArrayList<Obstacles>();
 ArrayList<Subsidy> subs = new ArrayList<Subsidy>();
-ArrayList<Background> bg = new ArrayList <Background>(); 
+ArrayList<Background> bg = new ArrayList <Background>();
+ArrayList<PImage> seaFood = new ArrayList<PImage>();
 ArrayList<PImage> bgReserve = new ArrayList<PImage>();
 
 float present;
@@ -22,13 +32,20 @@ int counter1 = 0;
 int counter2 = 0;
 int count0;
 int count1;
+int subCount = 0;
 int seaLevel;
 float[] brePara = new float[2];
 float[] hunPara = new float[2];
+int x;
+int y;
 
 void setup() {
   size(1280, 720);
   // initializing two arrays
+  video = new Capture(this, 1280, 720);
+  video.start();
+  opencv = new OpenCV(this, video.width, video.height);
+  contours = new ArrayList<Contour>();
   seaLevel = 250;
   background(0);
   count0 = 0;
@@ -101,8 +118,7 @@ void setup() {
   food [1] = loadImage("C2.png");
   for (int i = 0; i < 4; i ++){
     garbage[i] = loadImage("G" + str(i + 1) + ".png");
-  }
-  
+  }  
   for (int i = 0; i < whales.length; i ++){
     whales[i].resize(175, 100);
   }
@@ -136,7 +152,10 @@ void draw() {
         subs.clear();
         bg.clear();
         bgReserve.clear();
+        seaFood.clear();
       }
+      seaFood.add(loadImage("C1.png"));
+      seaFood.add(loadImage("C2.png"));
       bgReserve.add(loadImage("BG1.jpg"));
       bgReserve.add(loadImage("BG2.jpg"));
       bgReserve.add(loadImage("BG1.jpg"));
@@ -177,7 +196,6 @@ void draw() {
       for (int i = 0; i < 2; i ++) {
         int[] classifier = classifier();
         int obIn = classifier[0];
-        int subIn = classifier[1];
         obs.add(new Obstacles(random(40) + width, random(seaLevel, height), random(5, 10), obIn));
         subs.add(new Subsidy(random(40) + width, random(seaLevel, height), random(5, 10)));
       }
@@ -189,6 +207,55 @@ void draw() {
     //println(bg.size());
     //print("bgReserve");
     //println(bgReserve.size());
+    if (video.available()) {
+      video.read();
+    }
+
+    // <2> Load the new frame of our movie in to OpenCV
+    opencv.loadImage(video);
+    
+    // Tell OpenCV to use color information
+    opencv.useColor();
+    src = opencv.getSnapshot();
+    
+    // <3> Tell OpenCV to work in HSV color space.
+    opencv.useColor(HSB);
+    
+    // <4> Copy the Hue channel of our image into 
+    //     the gray channel, which we process.
+    opencv.setGray(opencv.getH().clone());
+    
+    // <5> Filter the image based on the range of 
+    //     hue values that match the object we want to track.
+    opencv.inRange(175, 181);
+    
+    // <6> Get the processed image for reference.
+    colorFilteredImage = opencv.getSnapshot();
+    
+    ///////////////////////////////////////////
+    // We could process our image here!
+    // See ImageFiltering.pde
+    ///////////////////////////////////////////
+    
+    // <7> Find contours in our range image.
+    //     Passing 'true' sorts them by descending area.
+    contours = opencv.findContours(true, true);
+    
+    // <8> Display background images
+   // image(src, 0, 0);
+    //image(colorFilteredImage, src.width, 0);
+    
+    // <9> Check to make sure we've found any contours
+    if (contours.size() > 0) {
+      // <9> Get the first contour, which will be the largest one
+      Contour biggestContour = contours.get(0);
+      
+      // <10> Find the bounding box of the largest contour,
+      //      and hence our object.
+      Rectangle r = biggestContour.getBoundingBox();
+      x = r.x + r.width/2;
+      y = r.y + r.height/2;
+    }
     for (int i = 0; i < 2; i ++){
       Background back = bg.get(i); 
       back.display();
@@ -211,12 +278,12 @@ void draw() {
     previous1 = moreBlocks(present, previous1, seaLevel);
     brePara = breathe(present, brePara, seaLevel);
     // display ball, obstacles, subsidy
-    displayMove(counter0);
+    subCount = displayMove(counter0, subCount);
     // generate new obstacles and subsidy
     // once out of the screen
     generate(seaLevel);
     // user control the ball through keyboard
-    control();
+    control(x, y);
     // collision determination
     hunPara[1] = collision(counter2, seaLevel);
     hunPara = hunger(present, hunPara);

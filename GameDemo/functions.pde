@@ -1,27 +1,34 @@
 ////////////////////////////FUNCTIONS////////////////////////////
-void displayMove(int counter) {
+int displayMove(int counter, int subCount) {
   for (Obstacles ob : obs){
     ob.display();
     ob.move();
   }
   for (Subsidy sub : subs){
-    sub.display();
+    sub.display(food[subCount]);
     sub.move();
   }
+  if (subCount == 0){
+    subCount = 1;
+  } else {
+    subCount = 0;
+  }
   ball1.display(whales[counter]);
+  return subCount;
 }
 
 void generate(int seaLevel) {
-  for (int i = 0; i < subs.size(); i ++) {
+  for (int i = 0; i < obs.size(); i ++) {
     Obstacles ob = obs.get(i);
-    Subsidy sub = subs.get(i);
     int[] classifier = classifier();
     int obIn = classifier[0];
-    int subIn = classifier[1];
     if (ob.xpos < 0) {
       obs.remove(i);
       obs.add(new Obstacles(width + random(40), random(seaLevel, height), random(5, 10), obIn));
     }
+  }
+   for (int i = 0; i < subs.size(); i ++){
+    Subsidy sub = subs.get(i);
     if (sub.xpos < 0) {
       subs.remove(i);
       subs.add(new Subsidy(width + random(40), random(seaLevel, height), random(5, 10)));
@@ -29,21 +36,8 @@ void generate(int seaLevel) {
   }
 }
 
-void control() {
-  if (keyPressed) {
-    if (key == 'w' && ball1.ypos > 250) {
-      ball1.moveUp();
-    }
-    if (key == 'a' && ball1.xpos > 0) {
-      ball1.moveLeft();
-    }
-    if (key == 's' && ball1.ypos < height - 5) {
-      ball1.moveDown();
-    }
-    if (key == 'd' && ball1.xpos < width - 5) {
-      ball1.moveRight();
-    }
-  }
+void control(int x, int y) {
+  ball1.move(x, y);
 }
 // differnet gargage might be generated
 // at this moment
@@ -56,7 +50,6 @@ int collision(int count, int seaLevel) {
     float ob2 = dist(ob.xpos - 26, ob.ypos, ball1.xpos, ball1.ypos);
     int[] classifier = classifier();
     int obIn = classifier[0];
-    int subIn = classifier[1];
     if (ob1 + ob2 <= 60 + ob.r) {
       for (int m = 0; m < 2 * (4 - ob.obClass); m ++){
         ball1.hpDownC();
@@ -83,10 +76,9 @@ float moreBlocks(float present, float previous, int seaLevel){
     for (int i = 0; i < 2; i ++){
       int[] classifier = classifier();
       int obIn = classifier[0];
-      int subIn = classifier[1];
       obs.add(new Obstacles(width + random(40), random(seaLevel, height), random(4, 6), obIn));
-      subs.add(new Subsidy(width + random(40), random(seaLevel, height), random(4, 6)));
     }
+    subs.add(new Subsidy(width + random(40), random(seaLevel, height), random(4, 6)));
     println(subs.size());
     previous = present;
   }
@@ -112,10 +104,9 @@ float[] breathe(float present, float[] brePara, int seaLevel){
 float[] hunger(float present, float[] Para){
   float count = Para[1];
   float previous = Para[0];
-  int[] intervals = {10000, 8000, 4000, 3000};
+  int[] intervals = {5000, 4000, 2000, 1000};
   if (present - previous >= intervals[int(count)]){
     ball1.hpDownC();
-    println("here");
   }
   Para[0] = present;
   Para[1] = count;
