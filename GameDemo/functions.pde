@@ -58,7 +58,7 @@ int collision(int count, int seaLevel) {
       ball1.hpUpC();
       subs.remove(i);
       subs.add(new Subsidy(width + random(40), random(seaLevel, height), random(4, 6)));
-    }
+    } 
     gameState = ball1.liveOrDie(gameState);
   }
   return count;
@@ -81,21 +81,21 @@ float moreBlocks(float present, float previous, int seaLevel){
   return previous;
 }
 
-float[] breathe(float present, float[] brePara, int seaLevel){
-  float count = brePara[1];
-  float previous = brePara[0];
-  int[] intervals = {20000, 15000, 12000, 10000, 8000, 5000, 3000, 2000, 1000, 1000};
-  if (ball1.ypos > seaLevel + 20 && present - previous >= intervals[int(count)]){
-    ball1.breatheDownB();
-    brePara[0] = present;
-    brePara[1] ++;
-  } else if (ball1.ypos <= seaLevel + 20 && present - previous >= 2000){
-    ball1.breatheUpB();
-    brePara[1] = 0;
-    brePara[0] = present;
-  }
-  return brePara;
-}
+//float[] breathe(float present, float[] brePara, int seaLevel){
+//  float count = brePara[1];
+//  float previous = brePara[0];
+//  int[] intervals = {20000, 15000, 12000, 10000, 8000, 5000, 3000, 2000, 1000, 1000};
+//  if (ball1.ypos > seaLevel + 20 && present - previous >= intervals[int(count)]){
+//    ball1.breatheDownB();
+//    brePara[0] = present;
+//    brePara[1] ++;
+//  } else if (ball1.ypos <= seaLevel + 20 && present - previous >= 2000){
+//    ball1.breatheUpB();
+//    brePara[1] = 0;
+//    brePara[0] = present;
+//  }
+//  return brePara;
+//}
 
 float[] hunger(float present, float[] Para){
   float count = Para[1];

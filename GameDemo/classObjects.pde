@@ -55,10 +55,10 @@ class Ball {
   //}
   void move(int x, int y, int seaLevel) {
     xpos = x;
-    ypos = y;
-    //if (ypos <= seaLevel){
-    //  ypos = y;
-  // }
+    //ypos = y;
+    if (y >= seaLevel){
+      ypos = y;
+   }
 }
 // if the player hit the block for once
 // its hp will decrease by 25%

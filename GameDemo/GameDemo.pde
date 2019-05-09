@@ -7,12 +7,14 @@ PImage [] food = new PImage [2];
 import gab.opencv.*;
 import processing.video.*;
 import java.awt.Rectangle;
+import processing.serial.*;
 
 Capture video;
 OpenCV opencv;
 PImage src, colorFilteredImage;
 ArrayList<Contour> contours;
-
+Serial myPort;
+int valueFromArduino;
 int gameState = 0;
 //initiating ball 
 Ball ball1;
@@ -47,9 +49,10 @@ void setup() {
   video.start();
   opencv = new OpenCV(this, video.width, video.height);
   contours = new ArrayList<Contour>();
-  seaLevel = 250;
+  seaLevel = 230;
   background(0);
   count0 = 0;
+  myPort = new Serial(this, Serial.list()[ 3 ], 9600);
   whales [0]= loadImage("0.png");
   whales [1]= loadImage("0.png");
   whales [2]= loadImage("0.png");
@@ -268,7 +271,7 @@ void draw() {
     // the objects in the obs array will increase
     // the objects in the subs array will decrease
     previous1 = moreBlocks(present, previous1, seaLevel);
-    brePara = breathe(present, brePara, seaLevel);
+    //brePara = breathe(present, brePara, seaLevel);
     // display ball, obstacles, subsidy
     subCount = displayMove(counter0, subCount);
     // generate new obstacles and subsidy
