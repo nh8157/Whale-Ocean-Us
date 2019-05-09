@@ -35,10 +35,6 @@ void generate(int seaLevel) {
     }
   }
 }
-
-void control(int x, int y) {
-  ball1.move(x, y);
-}
 // differnet gargage might be generated
 // at this moment
 // it will generate different kinds of garbages

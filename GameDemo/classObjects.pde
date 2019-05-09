@@ -1,20 +1,20 @@
 ////////////////////////////BACKGROUND////////////////////////////
-class Background{
+class Background {
   PImage img;
   int xpos;
   int speed;
-  Background(PImage image, int x){
+  Background(PImage image, int x) {
     img = image;
     xpos = x;
     speed = 5;
   }
-  PImage reimg(){
+  PImage reimg() {
     return img;
   }
-  void move(){
+  void move() {
     xpos -= speed;
   }
-  void display(){
+  void display() {
     image(img, xpos, height / 2);
   }
 }
@@ -53,46 +53,50 @@ class Ball {
   //void moveRight() {
   //  xpos += speed;
   //}
-  void move(int x, int y){
+  void move(int x, int y, int seaLevel) {
     xpos = x;
     ypos = y;
-  }
-  // if the player hit the block for once
-  // its hp will decrease by 25%
-  void hpDownC() {
-    hp -= 5;
-  }
-  void hpUpC() {
-    if (hp <= 95) {
-      hp += 5;
-    } else if (hp < 100) {
-      hp = 100;
-    }
-  }
-  void breatheUpB() {
-    if (hp != 100){
-      hpUpC();
-    } else if(bre < 30){
-      bre += 10;
-    }
-  }
-  void breatheDownB() {
-    if (bre == 0){
-      hpDownC();
-    } else {
-      bre -= 10;
-    }
-  }
-  int liveOrDie(int gameState) {
-    if (hp <= 0) {
-      gameState = 2;
-    }
-    return gameState;
-  }
-  void display(PImage i) {
-    image(i, xpos - 55, ypos +10);
+    //if (ypos <= seaLevel){
+    //  ypos = y;
+  // }
+}
+// if the player hit the block for once
+// its hp will decrease by 25%
+void hpDownC() {
+  hp -= 5;
+}
+void hpUpC() {
+  if (hp <= 95) {
+    hp += 5;
+  } else if (hp < 100) {
+    hp = 100;
   }
 }
+void breatheUpB() {
+  if (hp != 100) {
+    hpUpC();
+  } else if (bre < 30) {
+    bre += 10;
+  }
+}
+void breatheDownB() {
+  if (bre == 0) {
+    hpDownC();
+  } else {
+    bre -= 10;
+  }
+}
+int liveOrDie(int gameState) {
+  if (hp <= 0) {
+    gameState = 2;
+  }
+  return gameState;
+}
+void display(PImage i) {
+  image(i, xpos - 55, ypos +10);
+}
+}
+
 
 ////////////////////////////OBSTACLES////////////////////////////
 
@@ -115,16 +119,16 @@ class Obstacles {
     xpos -= speed;
   }
   void display() {
-    if (displayCount == 0){
-      if (obClass == 2){
+    if (displayCount == 0) {
+      if (obClass == 2) {
         ypos = random(seaLevel - 40, seaLevel);
         speed = random(3, 5);
         displayCount ++;
-      } else if (obClass == 0){
+      } else if (obClass == 0) {
         speed = random(8, 10);
       }
     }
-    image (garbage[obClass], xpos, ypos, r,r);
+    image (garbage[obClass], xpos, ypos, r, r);
   }
 }
 

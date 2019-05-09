@@ -42,7 +42,8 @@ int y;
 void setup() {
   size(1280, 720);
   // initializing two arrays
-  video = new Capture(this, 1280, 720);
+  //video = new Capture(this, 1280, 720);
+  video = new Capture(this, 640, 360);
   video.start();
   opencv = new OpenCV(this, video.width, video.height);
   contours = new ArrayList<Contour>();
@@ -116,10 +117,10 @@ void setup() {
   whales [64] =loadImage("0.png");
   food [0] = loadImage("C1.png");
   food [1] = loadImage("C2.png");
-  for (int i = 0; i < 4; i ++){
+  for (int i = 0; i < 4; i ++) {
     garbage[i] = loadImage("G" + str(i + 1) + ".png");
   }  
-  for (int i = 0; i < whales.length; i ++){
+  for (int i = 0; i < whales.length; i ++) {
     whales[i].resize(175, 100);
   }
   count0 ++;
@@ -147,7 +148,7 @@ void draw() {
       gameState = 1;
       ball1 = new Ball(0, 450, 7);
       imageMode(CENTER);
-      if (count0 != 0){
+      if (count0 != 0) {
         obs.clear();
         subs.clear();
         bg.clear();
@@ -180,17 +181,16 @@ void draw() {
       bgReserve.add(loadImage("BG6.jpg"));
       bgReserve.add(loadImage("BG5.jpg"));
       bgReserve.add(loadImage("BG6.jpg"));
-      for (PImage bgR : bgReserve){
+      for (PImage bgR : bgReserve) {
         bgR.resize(width, height);
       }
-      for (int i = 0; i < 2; i ++){
+      for (int i = 0; i < 2; i ++) {
         PImage img = bgReserve.get(0);
-        if (i == 0){
+        if (i == 0) {
           bg.add(new Background(img, width / 2));
         } else {
           bg.add(new Background(img, width * 3 / 2));
         }
-        
       }
       // adding class objects into arrays
       for (int i = 0; i < 2; i ++) {
@@ -203,64 +203,54 @@ void draw() {
   } else if (gameState == 1) {
     //displayBG(bgReserve, bg);
     imageMode(CENTER);
-    //print("bg");
-    //println(bg.size());
-    //print("bgReserve");
-    //println(bgReserve.size());
     if (video.available()) {
       video.read();
     }
-
     // <2> Load the new frame of our movie in to OpenCV
     opencv.loadImage(video);
-    
+    //opencv.flip(OpenCV.HORIZONTAL);
     // Tell OpenCV to use color information
     opencv.useColor();
-    src = opencv.getSnapshot();
-    
+    //src = opencv.getSnapshot();    
     // <3> Tell OpenCV to work in HSV color space.
     opencv.useColor(HSB);
-    
     // <4> Copy the Hue channel of our image into 
     //     the gray channel, which we process.
     opencv.setGray(opencv.getH().clone());
-    
     // <5> Filter the image based on the range of 
     //     hue values that match the object we want to track.
     opencv.inRange(175, 181);
-    
     // <6> Get the processed image for reference.
-    colorFilteredImage = opencv.getSnapshot();
-    
-    ///////////////////////////////////////////
-    // We could process our image here!
-    // See ImageFiltering.pde
-    ///////////////////////////////////////////
-    
+    //colorFilteredImage = opencv.getSnapshot();    
     // <7> Find contours in our range image.
     //     Passing 'true' sorts them by descending area.
     contours = opencv.findContours(true, true);
-    
-    // <8> Display background images
-   // image(src, 0, 0);
-    //image(colorFilteredImage, src.width, 0);
-    
-    // <9> Check to make sure we've found any contours
     if (contours.size() > 0) {
       // <9> Get the first contour, which will be the largest one
       Contour biggestContour = contours.get(0);
-      
+
       // <10> Find the bounding box of the largest contour,
       //      and hence our object.
       Rectangle r = biggestContour.getBoundingBox();
-      x = r.x + r.width/2;
-      y = r.y + r.height/2;
+
+      float easing = 0.08;
+      float targetX = width - ((r.x + r.width/2)*2);
+      float dx = targetX - x;
+      x += dx * easing;
+
+      float targetY = (r.y + r.height/2)*2;
+      float dy = targetY - y;
+      y += dy * easing;
+
+      //x = r.x + r.width/2;
+      //y = r.y + r.height/2;
     }
-    for (int i = 0; i < 2; i ++){
+    // background management
+    for (int i = 0; i < 2; i ++) {
       Background back = bg.get(i); 
       back.display();
       back.move();
-      if (back.xpos == -width / 2){
+      if (back.xpos == -width / 2) {
         bg.remove(i);
         PImage new_img = bgReserve.get(0); 
         bgReserve.remove(i);
@@ -268,6 +258,8 @@ void draw() {
       }
     }
     // need to use graphics to show the demonstrate the blood left
+    ball1.move(x, y, seaLevel);
+
     text(ball1.hp, 30, 30);
     text(ball1.bre, 30, 50);
     // attempting to introduce a rising difficulty
@@ -283,11 +275,10 @@ void draw() {
     // once out of the screen
     generate(seaLevel);
     // user control the ball through keyboard
-    control(x, y);
     // collision determination
     hunPara[1] = collision(counter2, seaLevel);
     hunPara = hunger(present, hunPara);
-    if (counter0 < 64){
+    if (counter0 < 64) {
       counter0 ++;
     } else {
       counter0 = 0;
