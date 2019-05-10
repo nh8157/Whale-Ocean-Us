@@ -40,6 +40,7 @@ float[] brePara = new float[2];
 float[] hunPara = new float[2];
 int x;
 int y;
+int vibration;
 
 void setup() {
   size(1280, 720);
@@ -279,9 +280,8 @@ void draw() {
     generate(seaLevel);
     // user control the ball through keyboard
     // collision determination
-    hunPara[1] = collision(counter2, seaLevel);
-    hunPara = hunger(present, hunPara);
-    if (counter0 < 64) {
+    vibration = collision(previous2, seaLevel);   
+  if (counter0 < 64) {
       counter0 ++;
     } else {
       counter0 = 0;

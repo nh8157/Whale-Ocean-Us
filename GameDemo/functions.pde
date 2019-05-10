@@ -38,7 +38,9 @@ void generate(int seaLevel) {
 // differnet gargage might be generated
 // at this moment
 // it will generate different kinds of garbages
-int collision(int count, int seaLevel) {
+int collision(float previous2, int seaLevel) {
+  vibration = 0;
+  int time = 0;
   for (int i = 0; i < subs.size(); i++) {
     Obstacles ob = obs.get(i);
     Subsidy sub = subs.get(i);
@@ -47,12 +49,16 @@ int collision(int count, int seaLevel) {
     int[] classifier = classifier();
     int obIn = classifier[0];
     if (ob1 + ob2 <= 60 + ob.r) {
+      myPort.write('H');
+      time ++;
       for (int m = 0; m < 2 * (4 - ob.obClass); m ++){
         ball1.hpDownC();
-      }
+      } 
       obs.remove(i);
       obs.add(new Obstacles(width + random(40), random(seaLevel, height), random(4, 6), obIn));
-      count = 0;
+    }
+    if (time == 0){
+      myPort.write('L');
     }
     if (dist(ball1.xpos, ball1.ypos, sub.xpos, sub.ypos) <= 30) {
       ball1.hpUpC();
@@ -61,7 +67,7 @@ int collision(int count, int seaLevel) {
     } 
     gameState = ball1.liveOrDie(gameState);
   }
-  return count;
+  return vibration;
 }
 
 // garbage is according to the random number generated
