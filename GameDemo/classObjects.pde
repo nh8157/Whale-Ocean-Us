@@ -40,19 +40,6 @@ class Ball {
     bre = 30;
   }
 
-  // user controlling the movement of the ball
-  //void moveUp() {
-  //  ypos -= speed;
-  //}
-  //void moveDown() {
-  //  ypos += speed;
-  //}
-  //void moveLeft() {
-  //  xpos -= speed;
-  //}
-  //void moveRight() {
-  //  xpos += speed;
-  //}
   void move(int x, int y, int seaLevel) {
     xpos = x;
     //ypos = y;
@@ -72,20 +59,7 @@ void hpUpC() {
     hp = 100;
   }
 }
-void breatheUpB() {
-  if (hp != 100) {
-    hpUpC();
-  } else if (bre < 30) {
-    bre += 10;
-  }
-}
-void breatheDownB() {
-  if (bre == 0) {
-    hpDownC();
-  } else {
-    bre -= 10;
-  }
-}
+
 int liveOrDie(int gameState) {
   if (hp <= 0) {
     gameState = 2;

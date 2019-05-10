@@ -53,7 +53,7 @@ void setup() {
   seaLevel = 230;
   background(0);
   count0 = 0;
-  myPort = new Serial(this, Serial.list()[ 3 ], 9600);
+  myPort = new Serial(this, Serial.list()[ 1 ], 9600);
   whales [0]= loadImage("0.png");
   whales [1]= loadImage("0.png");
   whales [2]= loadImage("0.png");
@@ -223,7 +223,7 @@ void draw() {
     opencv.setGray(opencv.getH().clone());
     // <5> Filter the image based on the range of 
     //     hue values that match the object we want to track.
-    opencv.inRange(175, 181);
+    opencv.inRange(176, 180);
     // <6> Get the processed image for reference.
     //colorFilteredImage = opencv.getSnapshot();    
     // <7> Find contours in our range image.
@@ -237,7 +237,7 @@ void draw() {
       //      and hence our object.
       Rectangle r = biggestContour.getBoundingBox();
 
-      float easing = 0.08;
+      float easing = 0.05;
       float targetX = width - ((r.x + r.width/2)*2);
       float dx = targetX - x;
       x += dx * easing;
@@ -263,7 +263,8 @@ void draw() {
     }
     // need to use graphics to show the demonstrate the blood left
     ball1.move(x, y, seaLevel);
-
+    fill(0, 255, 0);
+    rect(width / 4, height / 16, ball1.hp, height * 3 / 32);
     text(ball1.hp, 30, 30);
     text(ball1.bre, 30, 50);
     // attempting to introduce a rising difficulty
