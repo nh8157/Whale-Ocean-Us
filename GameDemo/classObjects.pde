@@ -29,15 +29,21 @@ class Ball {
   int ypos;
   int speed;
   int r;
-  int hp;
-  int bre;
+  float hp;
+  int G1;
+  int G2;
+  int G3;
+  int G4;
   Ball(int x, int y, int spe) {
     xpos = x;
     ypos = y;
     speed = spe;
     r = 100;
     hp = 100;
-    bre = 30;
+    G1 = 0;
+    G2 = 0;
+    G3 = 0;
+    G4 = 0;
   }
 
   void move(int x, int y, int seaLevel) {
@@ -49,6 +55,19 @@ class Ball {
 }
 // if the player hit the block for once
 // its hp will decrease by 25%
+// the number of each type of garbage eaten
+void garbageUp(int i){
+  if (i == 0){
+    G1 ++;
+  } else if (i == 1){
+    G2 ++;
+  } else if (i == 2){
+    G3 ++;
+  } else if (i == 3){
+    G4 ++;
+  }
+  
+}
 void hpDownC() {
   hp -= 5;
 }
@@ -62,7 +81,7 @@ void hpUpC() {
 
 int liveOrDie(int gameState) {
   if (hp <= 0) {
-    gameState = 2;
+    gameState ++;
   }
   return gameState;
 }
@@ -92,6 +111,9 @@ class Obstacles {
   void move() {
     xpos -= speed;
   }
+  int reClass(){
+    return obClass;
+  }
   void display() {
     if (displayCount == 0) {
       if (obClass == 2) {
@@ -102,7 +124,7 @@ class Obstacles {
         speed = random(8, 10);
       }
     }
-    image (garbage[obClass], xpos, ypos, r, r);
+    image (garbage[obClass], xpos, ypos);
   }
 }
 
@@ -112,8 +134,8 @@ class Subsidy {
   float xpos;
   float ypos;
   float a;
-  float speed;
-  Subsidy(float x, float y, float spd) {
+  float speed;  
+  Subsidy(float x, float y, float spd, int sub) {
     xpos = x;
     ypos = y;
     a = 20;
@@ -123,7 +145,6 @@ class Subsidy {
     xpos -= speed;
   }
   void display(PImage i) {
-    fill(0, 255, 0);
     image(i, xpos, ypos);
   }
 }

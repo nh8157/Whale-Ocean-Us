@@ -1,5 +1,8 @@
-PImage bag ;
-
+PImage bag;
+PImage introBG;
+PImage firstBG;
+PImage endBG1;
+PImage endBG2;
 PImage [] whales = new PImage [65];
 PImage [] garbage = new PImage [4];
 PImage [] food = new PImage [2];
@@ -8,6 +11,8 @@ import gab.opencv.*;
 import processing.video.*;
 import java.awt.Rectangle;
 import processing.serial.*;
+import processing.sound.*;
+SoundFile file;
 
 Capture video;
 OpenCV opencv;
@@ -43,7 +48,7 @@ int y;
 int vibration;
 
 void setup() {
-  size(1280, 720);
+  size(1280, 700);
   // initializing two arrays
   //video = new Capture(this, 1280, 720);
   video = new Capture(this, 640, 360);
@@ -119,18 +124,40 @@ void setup() {
   whales [62] =loadImage("0.png");
   whales [63] =loadImage("0.png");
   whales [64] =loadImage("0.png");
-  food [0] = loadImage("C1.png");
-  food [1] = loadImage("C2.png");
+  firstBG = loadImage("firstBG.JPG");
+  firstBG.resize(width, height);
+  introBG = loadImage("Instruction.png");
+  introBG.resize(width, height);
+  endBG1 = loadImage("endBG1.JPG");
+  endBG1.resize(width, height);
+  endBG2 = loadImage("endBG2.JPG");
+  endBG2.resize(width, height);
+  for (int i = 0; i < 2; i ++) {
+    food[i] = loadImage("C" + str(i + 1) + ".png");
+    food[i].resize(50, 60);
+  }
   for (int i = 0; i < 4; i ++) {
     garbage[i] = loadImage("G" + str(i + 1) + ".png");
-  }  
+    if (i == 0) {
+      garbage[i].resize(54, 58);
+    } else if (i == 1) {
+      garbage[i].resize(55, 35);
+    } else if (i == 2) {
+      garbage[i].resize(50, 52);
+    } else {
+      garbage[i].resize(64, 37);
+    }
+  }
   for (int i = 0; i < whales.length; i ++) {
-    whales[i].resize(175, 100);
+    whales[i].resize(200, 115);
   }
   count0 ++;
+  myPort.write('L');
+  //file = new SoundFile(this, "bgm.mp3");
 }
 
 void draw() {
+ 
   // the state of the game stays at the first
   // when the user clicks
   // the state will change again
@@ -138,10 +165,20 @@ void draw() {
   present = millis();
   if (gameState == 0) {
     counter0 = 0;
-    background(0);
-    text("Welcome to the game", width / 2, height / 2);
-    text("Press S to start", width / 2, height / 2 + 10);
+    imageMode(CORNER);
+    image(firstBG, 0, 0);
+    fill(255);
+    textSize(26);
     if (keyPressed && key == 's') {
+      gameState ++;
+      delay(100);
+    }
+  } else if (gameState == 1) {
+    imageMode(CORNER);
+    image(introBG, 0, 0);
+    fill(255);
+    text("Press B to continue", width - 300, height - 100);
+    if (keyPressed && key == 'b') {
       previous0 = present;
       previous1 = present;
       previous2 = present;
@@ -149,7 +186,7 @@ void draw() {
       brePara[1] = counter1;
       hunPara[0] = previous2;
       hunPara[1] = counter2;
-      gameState = 1;
+      gameState ++;
       ball1 = new Ball(0, 450, 7);
       imageMode(CENTER);
       if (count0 != 0) {
@@ -200,12 +237,12 @@ void draw() {
       for (int i = 0; i < 2; i ++) {
         int[] classifier = classifier();
         int obIn = classifier[0];
+        int subIn = classifier[1];
         obs.add(new Obstacles(random(40) + width, random(seaLevel, height), random(5, 10), obIn));
-        subs.add(new Subsidy(random(40) + width, random(seaLevel, height), random(5, 10)));
+        subs.add(new Subsidy(random(40) + width, random(seaLevel, height), random(5, 10), subIn));
       }
     }
-  } else if (gameState == 1) {
-    //displayBG(bgReserve, bg);
+  } else if (gameState == 2) {
     imageMode(CENTER);
     if (video.available()) {
       video.read();
@@ -256,43 +293,60 @@ void draw() {
       back.move();
       if (back.xpos == -width / 2) {
         bg.remove(i);
-        PImage new_img = bgReserve.get(0); 
-        bgReserve.remove(i);
-        bg.add(new Background(new_img, width * 3 / 2));
+        if (bgReserve.size() > 0) {
+          PImage new_img = bgReserve.get(0); 
+          bgReserve.remove(i);
+          bg.add(new Background(new_img, width * 3 / 2));
+        } else {
+          PImage new_img = back.reimg();
+          bg.add(new Background(new_img, width * 3 / 2));
+        }
       }
     }
     // need to use graphics to show the demonstrate the blood left
     ball1.move(x, y, seaLevel);
-    fill(0, 255, 0);
-    rect(width / 4, height / 16, ball1.hp, height * 3 / 32);
-    text(ball1.hp, 30, 30);
-    text(ball1.bre, 30, 50);
     // attempting to introduce a rising difficulty
     // use the millis()
     // when the program executes to a point
     // the objects in the obs array will increase
     // the objects in the subs array will decrease
     previous1 = moreBlocks(present, previous1, seaLevel);
-    //brePara = breathe(present, brePara, seaLevel);
     // display ball, obstacles, subsidy
     subCount = displayMove(counter0, subCount);
+    noStroke();
+    fill(0, 200, 20, 220);
+    rect(width / 4, height * 15 / 16, 6.4 * ball1.hp, 100, 7);
     // generate new obstacles and subsidy
     // once out of the screen
     generate(seaLevel);
     // user control the ball through keyboard
     // collision determination
-    vibration = collision(previous2, seaLevel);   
-  if (counter0 < 64) {
+    vibration = collision(previous2, seaLevel);
+    fill(0);
+    textSize(26);
+    if (counter0 < 64) {
       counter0 ++;
     } else {
       counter0 = 0;
     }
-  } else {
-    background(0);
-    text("game over", width/2, height/2);
-    text("press B to restart", width/2, height/2 + 20);
+  } else if (gameState == 3){
+    imageMode(CORNER);
+    image(endBG1, 0, 0);    
+    fill(255);
+
+    textSize(26);
+    text("press S to continue", width/2, height - 20);
+    myPort.write('L');
     if (keyPressed) {
-      if (key == 'b' || key == 'B') {
+      if (key == 's' || key == 'S') {
+        gameState ++;
+      }
+    }
+  } else {
+    imageMode(CORNER);
+    image(endBG2, 0, 0);
+    if (keyPressed){
+      if (key == 'b' || key == 'B'){
         gameState = 0;
       }
     }

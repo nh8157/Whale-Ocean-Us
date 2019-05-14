@@ -1,14 +1,14 @@
 ////////////////////////////FUNCTIONS////////////////////////////
 int displayMove(int counter, int subCount) {
-  for (Obstacles ob : obs){
+  for (Obstacles ob : obs) {
     ob.display();
     ob.move();
   }
-  for (Subsidy sub : subs){
+  for (Subsidy sub : subs) {
     sub.display(food[subCount]);
     sub.move();
   }
-  if (subCount == 0){
+  if (subCount == 0) {
     subCount = 1;
   } else {
     subCount = 0;
@@ -27,11 +27,13 @@ void generate(int seaLevel) {
       obs.add(new Obstacles(width + random(40), random(seaLevel, height), random(5, 10), obIn));
     }
   }
-   for (int i = 0; i < subs.size(); i ++){
+  for (int i = 0; i < subs.size(); i ++) {
     Subsidy sub = subs.get(i);
+    int[] classifier = classifier();
+    int subIn = classifier[1];
     if (sub.xpos < 0) {
       subs.remove(i);
-      subs.add(new Subsidy(width + random(40), random(seaLevel, height), random(5, 10)));
+      subs.add(new Subsidy(width + random(40), random(seaLevel, height), random(5, 10), subIn));
     }
   }
 }
@@ -48,22 +50,25 @@ int collision(float previous2, int seaLevel) {
     float ob2 = dist(ob.xpos - 26, ob.ypos, ball1.xpos, ball1.ypos);
     int[] classifier = classifier();
     int obIn = classifier[0];
+    int subIn = classifier[1];
     if (ob1 + ob2 <= 60 + ob.r) {
+      // still necessary to keep this function?
       myPort.write('H');
-      time ++;
-      for (int m = 0; m < 2 * (4 - ob.obClass); m ++){
+      ball1.garbageUp(ob.reClass());
+      for (int m = 0; m < 2 * (4 - ob.obClass); m ++) {
         ball1.hpDownC();
+        myPort.write('H');
       } 
+      myPort.write('H');
       obs.remove(i);
       obs.add(new Obstacles(width + random(40), random(seaLevel, height), random(4, 6), obIn));
-    }
-    if (time == 0){
+    } else {
       myPort.write('L');
     }
     if (dist(ball1.xpos, ball1.ypos, sub.xpos, sub.ypos) <= 30) {
       ball1.hpUpC();
       subs.remove(i);
-      subs.add(new Subsidy(width + random(40), random(seaLevel, height), random(4, 6)));
+      subs.add(new Subsidy(width + random(40), random(seaLevel, height), random(4, 6), subIn));
     } 
     gameState = ball1.liveOrDie(gameState);
   }
@@ -73,41 +78,28 @@ int collision(float previous2, int seaLevel) {
 // garbage is according to the random number generated
 // the obstacles will be generated more
 // the subsidy will be fewer and fewer
-float moreBlocks(float present, float previous, int seaLevel){
-  if (present - previous > 10000){
-    for (int i = 0; i < 2; i ++){
+float moreBlocks(float present, float previous, int seaLevel) {
+  if (present - previous > 10000) {
+    for (int i = 0; i < 2; i ++) {
       int[] classifier = classifier();
       int obIn = classifier[0];
+
       obs.add(new Obstacles(width + random(40), random(seaLevel, height), random(4, 6), obIn));
     }
-    subs.add(new Subsidy(width + random(40), random(seaLevel, height), random(4, 6)));
+    int[] classifier = classifier();
+    int subIn = classifier[1];
+    subs.add(new Subsidy(width + random(40), random(seaLevel, height), random(4, 6), subIn));
     println(subs.size());
     previous = present;
   }
   return previous;
 }
 
-//float[] breathe(float present, float[] brePara, int seaLevel){
-//  float count = brePara[1];
-//  float previous = brePara[0];
-//  int[] intervals = {20000, 15000, 12000, 10000, 8000, 5000, 3000, 2000, 1000, 1000};
-//  if (ball1.ypos > seaLevel + 20 && present - previous >= intervals[int(count)]){
-//    ball1.breatheDownB();
-//    brePara[0] = present;
-//    brePara[1] ++;
-//  } else if (ball1.ypos <= seaLevel + 20 && present - previous >= 2000){
-//    ball1.breatheUpB();
-//    brePara[1] = 0;
-//    brePara[0] = present;
-//  }
-//  return brePara;
-//}
-
-float[] hunger(float present, float[] Para){
+float[] hunger(float present, float[] Para) {
   float count = Para[1];
   float previous = Para[0];
   int[] intervals = {5000, 4000, 2000, 1000};
-  if (present - previous >= intervals[int(count)]){
+  if (present - previous >= intervals[int(count)]) {
     ball1.hpDownC();
   }
   Para[0] = present;
@@ -115,24 +107,30 @@ float[] hunger(float present, float[] Para){
   return Para;
 }
 
+void breathe(int seaLevel) {
+  if (ball1.ypos <= seaLevel + 5) {
+    ball1.hp += 0.05;
+  }
+}
+
 // random generator for the determination of garbage type
-int[] classifier(){
+int[] classifier() {
   float obRandom = random(10);
   float subRandom = random(10);
   int obIn;
   int subIn;
-  if (obRandom <= 10 && obRandom > 9){
+  if (obRandom <= 10 && obRandom > 8) {
     obIn = 0;
-  } else if (obRandom <= 9 && obRandom > 7){
+  } else if (obRandom <= 8 && obRandom > 6) {
     obIn = 1;
-  } else if (obRandom <= 7 && obRandom > 4) {
+  } else if (obRandom <= 6 && obRandom > 4) {
     obIn = 2;
   } else {
     obIn = 3;
   }
-  if (subRandom <= 10 && subRandom > 9){
+  if (subRandom <= 10 && subRandom > 9) {
     subIn = 0;
-  } else if (subRandom <= 9 && subRandom > 7){
+  } else if (subRandom <= 9 && subRandom > 7) {
     subIn = 1;
   } else if (subRandom <= 7 && subRandom > 4) {
     subIn = 2;
