@@ -48,7 +48,7 @@ int y;
 int vibration;
 
 void setup() {
-  size(1280, 700);
+  size(1280, 720);
   // initializing two arrays
   //video = new Capture(this, 1280, 720);
   video = new Capture(this, 640, 360);
